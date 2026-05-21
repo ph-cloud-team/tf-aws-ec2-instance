@@ -1,0 +1,29 @@
+############################################
+# Terraform AWS Module Pipeline
+# Repo: tf-aws-ec2-instance
+#
+# Purpose:
+# - Consume centralized enterprise Terraform module pipeline
+# - Repo defines the execution stage contract
+# - Shared pipeline provides jobs, controls, and validation logic
+############################################
+
+include:
+  - project: infra_team/platform-pipelines
+    file: terraform/modules/aws.yml
+
+variables:
+  # CI-only mock value used by examples/basic during module plan validation.
+  # The real live repo must pass the real enterprise IAM permissions boundary ARN.
+  TF_VAR_permissions_boundary_arn: "arn:aws:iam::000000000000:policy/platform-module-test-boundary"
+
+stages:
+  - security
+  - governance
+  - compliance
+  - lint
+  - fmt
+  - validate
+  - plan
+  - policy
+  - release
