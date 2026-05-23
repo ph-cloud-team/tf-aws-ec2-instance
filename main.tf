@@ -89,6 +89,30 @@ resource "aws_vpc_security_group_egress_rule" "https" {
   to_port = 443
 }
 
+# Allows HTTPS egress to approved AWS managed prefix lists such as S3.
+resource "aws_vpc_security_group_egress_rule" "https_prefix_list" {
+  # Creates one egress rule for each approved prefix list supplied by the caller.
+  for_each = toset(var.egress_prefix_list_ids)
+
+  # Attaches the egress rule to the module-managed security group.
+  security_group_id = aws_security_group.this.id
+
+  # Describes why outbound TCP/443 exists.
+  description = "Allow HTTPS egress to approved AWS managed prefix lists"
+
+  # Uses managed prefix list egress for Gateway endpoint services such as S3.
+  prefix_list_id = each.value
+
+  # Restricts egress to TCP.
+  ip_protocol = "tcp"
+
+  # Opens only HTTPS from the instance.
+  from_port = 443
+
+  # Opens only HTTPS from the instance.
+  to_port = 443
+}
+
 # Creates the private EC2 instance.
 resource "aws_instance" "this" {
   # Uses an AMI supplied by the live repo from an approved image pipeline or catalog.

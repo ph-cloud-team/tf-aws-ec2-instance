@@ -132,6 +132,12 @@ variable "egress_cidr_blocks" {
   default     = ["10.0.0.0/8"]
 }
 
+variable "egress_prefix_list_ids" {
+  description = "Approved managed prefix list IDs allowed for outbound TCP/443, such as the regional S3 Gateway endpoint prefix list."
+  type        = list(string)
+  default     = []
+}
+
 variable "key_name" {
   description = "Optional EC2 key pair name. Enterprise default is null because access should use AWS Systems Manager Session Manager."
   type        = string
